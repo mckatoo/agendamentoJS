@@ -11,9 +11,14 @@ const routes = (server) => {
     }
   });
 
-  server.post('/api/users', (req, res, next) => {
-    res.send(req.params);
-    next();
+  server.post('/api/users', async (req, res, next) => {
+    try {
+      res.send(await db.users().save(req.params));
+      next();
+    } catch (error) {
+      res.send(error)
+      next();
+    }
   });
 };
 

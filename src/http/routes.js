@@ -1,8 +1,8 @@
-const users = require('../services/mysql');
+const db = require('../services/mysql');
 
 const routes = (server) => {
   server.get('/api/users', (req, res, next) => {
-    users
+    db.users().all()
       .then(dados => {
         res.send(dados);
         next();

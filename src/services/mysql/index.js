@@ -7,13 +7,8 @@ const connection = mysql.createConnection({
     database: 'agendamento'
 });
 
-const users = new Promise((resolve, reject) => {
-    connection.query('select * from users', (error, results) => {
-        if(error) {
-            reject(error);
-        }
-        resolve({ users: results });
-    })
-});
+const usersModule = require('./users')({ connection });
 
-module.exports = users;
+module.exports = {
+    users: () => usersModule
+};

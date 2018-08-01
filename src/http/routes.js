@@ -1,13 +1,14 @@
 const db = require('../services/mysql');
 
 const routes = (server) => {
-  server.get('/api/users', (req, res, next) => {
-    db.users().all()
-      .then(dados => {
-        res.send(dados);
-        next();
-      })
-      .catch(error => console.log(error));
+  server.get('/api/users', async (req, res, next) => {
+    try {
+      res.send(await db.users().all());
+      next();
+    } catch (error) {
+      res.send(error)
+      next();
+    }
   });
 
   server.post('/api/users', (req, res, next) => {

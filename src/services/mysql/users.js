@@ -2,10 +2,10 @@ const users = deps => {
     return {
         all: () => {
             return new Promise((resolve, reject) => {
-                const { connection } = deps;
+                const { connection, errorHandler } = deps;
                 connection.query('select * from users', (error, results) => {
                     if(error) {
-                        reject(error);
+                        errorHandler(error, 'Falha ao listar os usuários.', reject)
                     }
                     resolve({ users: results });
                 });

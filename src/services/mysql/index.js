@@ -7,8 +7,15 @@ const connection = mysql.createConnection({
     database: 'agendamento'
 });
 
-const usersModule = require('./users')({ connection });
+const errorHandler = (error, msg, rejectFunction) => {
+    console.log(error);
+    rejectFunction({ error: msg});
+};
+
+const usersModule = require('./users')({ connection, errorHandler });
+const teachersModule = require('./teachers')({ connection, errorHandler });
 
 module.exports = {
-    users: () => usersModule
+    users: () => usersModule,
+    teachers: () => teachersModule,
 };

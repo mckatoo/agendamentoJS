@@ -6,7 +6,7 @@ const routes = (server) => {
       res.send(await db.users().all());
       next();
     } catch (error) {
-      res.send(error)
+      res.send(error);
       next();
     }
   });
@@ -16,12 +16,11 @@ const routes = (server) => {
       res.send(await db.users().save(req.params));
       next();
     } catch (error) {
-      res.send(error)
+      res.send(error);
       next();
     }
   });
 };
-
 
 // server.put('users', (req, res, next) => {
 //   res.send()

@@ -12,27 +12,29 @@ const users = deps => {
         });
       });
     },
-    save: (dados) => {
-      let sql, acao;
-      if (dados.id == null) {
-        sql = 'insert into users (name, username, email, password, token) values (?)';
+    save: (resp) => {
+      let sql, acao, resposta;
+      let dados = [resp.name, resp.username, resp.email, resp.password, Math.random().toString(36).substr(2)];
+      if (resp.id == null) {
+        sql = 'insert into users (name, username, email, password, token) values (?,?,?,?,?)';
         acao = 'salvar';
-        dados = [dados];
+        resposta = resposta.insertId;
       } else {
-        sql = 'UPDATE users SET name, username, email, password, token = ? WHERE id = ?';
+        sql = 'UPDATE users SET name=?, username=?, email=?, password=?, token=? WHERE id=?';
         acao = 'atualizar';
-        dados = [dados, dados.id];
+        dados[5] = resp.id;
+        resposta = parseInt(resp.id);
       }
       return new Promise((resolve, reject) => {
         const { connection, errorHandler } = deps;
-        dados.token = Math.random().toString(36).substr(2);
+        resp.token = Math.random().toString(36).substr(2);
         connection
           .query(sql, dados, (error, results) => {
             if (error) {
               errorHandler(error, `Falha ao ${acao} o usuário ${dados.username}`, reject);
               return false;
             }
-            resolve({ user: results.insertId });
+            resolve({ user: resposta });
           });
       });
     },

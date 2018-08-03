@@ -15,10 +15,9 @@ const users = deps => {
     save: (resp) => {
       let sql, acao, resposta;
       let dados = [resp.name, resp.username, resp.email, resp.password, Math.random().toString(36).substr(2)];
-      if (resp.id == null) {
+      if (!resp.id) {
         sql = 'insert into users (name, username, email, password, token) values (?,?,?,?,?)';
         acao = 'salvar';
-        resposta = resposta.insertId;
       } else {
         sql = 'UPDATE users SET name=?, username=?, email=?, password=?, token=? WHERE id=?';
         acao = 'atualizar';
@@ -26,13 +25,16 @@ const users = deps => {
         resposta = parseInt(resp.id);
       }
       return new Promise((resolve, reject) => {
+        console.log('asldfj');
         const { connection, errorHandler } = deps;
-        resp.token = Math.random().toString(36).substr(2);
         connection
           .query(sql, dados, (error, results) => {
             if (error) {
               errorHandler(error, `Falha ao ${acao} o usuário ${dados.username}`, reject);
               return false;
+            }
+            if (!resposta) {
+              resposta = results.insertId;
             }
             resolve({ user: resposta });
           });

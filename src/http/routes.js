@@ -1,9 +1,9 @@
 const db = require('../services/mysql');
 
 const routes = (server) => {
-  server.get('/api/users', async (req, res, next) => {
+  server.get('/api/users/{id}', async (req, res, next) => {
     try {
-      res.send(await db.users().all());
+      res.send(await db.users().list());
     } catch (error) {
       res.send(error);
     }
@@ -21,7 +21,16 @@ const routes = (server) => {
 
   server.put('/api/users', async (req, res, next) => {
     try {
-      res.send(await db.users().update(req.params));
+      res.send(await db.users().save(req.params));
+    } catch (error) {
+      res.send(error);
+    }
+    next();
+  });
+
+  server.del('/api/users', async (req, res, next) => {
+    try {
+      res.send(await db.users().delete(req.params));
     } catch (error) {
       res.send(error);
     }

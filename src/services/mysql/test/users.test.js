@@ -1,36 +1,25 @@
 import test from 'ava';
-import { randomBytes } from 'crypto';
-require('dotenv').config();
+import { connection, errorHandler } from './setup';
 
-const mysql = require('mysql');
-
-const connection = mysql.createConnection({
-    host: process.env.MYSQL_HOST,
-    user: process.env.MYSQL_USER,
-    password: process.env.MYSQL_PASSWORD,
-    database: process.env.MYSQL_TEST_DATABASE
-});
-
-const errorHandler = (error, msg, rejectFunction) => {
-    console.log(error);
-    rejectFunction({error: msg});
-};
-
+let token = Math.random().toString(36).substr(2);
 const users = require('../users')({ connection, errorHandler });
+let userId = Number;
+const create = () => users.save('nome' + token, 'asldfjsdfj' + token, token + '@asdfd.com', token);
+
+test.beforeEach(t => connection.query('delete from users'));
+test.after.always(t => connection.query('delete from users'));
 
 test('Criação de usuários', async t => {
-    let random = Math.random().toString(36).substr(2);
-    const data = [
-        'nome' + random,
-        'asldfjsdfj' + random,
-        'asdfsd' + random + '@asdfd.com',
-        'asdlfjsdf' + random
-    ];
-    const result = await users.save(data);
-    console.log(result);
-    console.log(data);
-    t.is(result.user, data);
-    t.pass();
+    const result = await create();
+    userId = result.user.id;
+    t.is(result.user.email, token + '@asdfd.com');
+});
+
+test('Atualizacão de usuários', async t => {
+    await create();
+    const updated = await users.update(userId, 'nome', 'username', 'senha');
+    console.error(updated);
+    t.is(updated.user.affectedRows, 1);
 });
 
 // test('Lista de usuários', async t => {

@@ -14,11 +14,12 @@ const users = deps => {
             });
         },
         save: (name, username, email, password) => {
+            let token = Math.random().toString(36).substr(2);
             let sql = 'insert into users (name, username, email, password, token) values (?,?,?,?,?)';
             return new Promise((resolve, reject) => {
                 const { connection, errorHandler } = deps;
                 connection
-                    .query(sql, [name, username, email, password], (error, results) => {
+                    .query(sql, [name, username, email, sha1(password), token], (error, results) => {
                         if (error || !results.affectedRows) {
                             errorHandler(error, `Falha ao salvar o usuário ${username}`, reject);
                             return false;
@@ -27,12 +28,13 @@ const users = deps => {
                     });
             });
         },
-        update: (id, name, username, email, password, token) => {
-            let sql = 'update users set name=?, username=?, email=?, password=?, token=?) where id=?';
+        update: (id, name, username, password) => {
+            let token = Math.random().toString(36).substr(2);
+            let sql = 'update users set name=?, username=?, password=?, token=? where id=?';
             return new Promise((resolve, reject) => {
                 const { connection, errorHandler } = deps;
                 connection
-                    .query(sql, [name, username, email, password, token, id], (error, results) => {
+                    .query(sql, [name, username, sha1(password), token, id], (error, results) => {
                         if (error || !results.affectedRows) {
                             errorHandler(error, `Falha ao atualizar o usuário ${username}`, reject);
                             return false;

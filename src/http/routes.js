@@ -15,7 +15,6 @@ const routes = (server) => {
         try {
             res.send(
                 await db.users().save(
-                    par.id,
                     par.name,
                     par.username,
                     par.email,
@@ -29,8 +28,16 @@ const routes = (server) => {
     });
 
     server.put('/api/users', async (req, res, next) => {
+        let par = req.params;
         try {
-            res.send(await db.users().save(req.params));
+            res.send(
+                await db.users().update(
+                    par.id,
+                    par.name,
+                    par.username,
+                    par.password
+                )
+            );
         } catch (error) {
             res.send(error);
         }
